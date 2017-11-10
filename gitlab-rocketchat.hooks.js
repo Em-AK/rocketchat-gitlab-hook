@@ -2,6 +2,7 @@
 // see https://gitlab.com/help/web_hooks/web_hooks for full json posted by GitLab
 const MENTION_ALL_ALLOWED = false; // <- check that bot permission allow has mention-all before passing this to true.
 const NOTIF_COLOR = '#6498CC';
+const GITLAB_ICON = 'https://avatars0.githubusercontent.com/u/1086321?s=200&v=4';
 const IGNORE_CONFIDENTIAL = true;
 const refParser = (ref) => ref.replace(/^refs\/(?:tags|heads)\/(.+)$/, '$1');
 const displayName = (name) => (name && name.toLowerCase().replace(/\s+/g, '.'));
@@ -83,7 +84,7 @@ class Script { // eslint-disable-line
 			content: {
 				username: data.user ? data.user.name : (data.user_name || 'Unknown user'),
 				text: `Unknown event '${event}' occured. Data attached.`,
-				icon_url: data.user ? data.user.avatar_url : (data.user_avatar || ''),
+				icon_url: data.user ? data.user.avatar_url : (data.user_avatar || GITLAB_ICON),
 				attachments: [
 					{
 						text: `${JSON.stringify(data, null, 4)}`,
@@ -161,7 +162,7 @@ See: ${data.object_attributes.url}`
 		return {
 			content: {
 				username: 'gitlab/' + project.name,
-				icon_url: project.avatar_url || user.avatar_url || '',
+				icon_url: project.avatar_url || user.avatar_url || GITLAB_ICON,
 				text: at.join(' '),
 				attachments: [
 					makeAttachment(user, `${text}\n${comment.note}`)
@@ -190,7 +191,7 @@ See: ${data.object_attributes.url}`
 		return {
 			content: {
 				username: `gitlab/${mr.target.name}`,
-				icon_url: mr.target.avatar_url || mr.source.avatar_url || user.avatar_url || '',
+				icon_url: mr.target.avatar_url || mr.source.avatar_url || user.avatar_url || GITLAB_ICON,
 				text: at.join(' '),
 				attachments: [
 					makeAttachment(user, `${mr.action} MR [#${mr.iid} ${mr.title}](${mr.url})\n${mr.source_branch} into ${mr.target_branch}`)
@@ -211,7 +212,7 @@ See: ${data.object_attributes.url}`
 			return {
 				content: {
 					username: `gitlab/${project.name}`,
-					icon_url: project.avatar_url || data.user_avatar || '',
+					icon_url: project.avatar_url || data.user_avatar || GITLAB_ICON,
 					attachments: [
 						makeAttachment(user, `removed branch ${refParser(data.ref)} from [${project.name}](${web_url})`)
 					]
@@ -223,7 +224,7 @@ See: ${data.object_attributes.url}`
 			return {
 				content: {
 					username: `gitlab/${project.name}`,
-					icon_url: project.avatar_url || data.user_avatar || '',
+					icon_url: project.avatar_url || data.user_avatar || GITLAB_ICON,
 					attachments: [
 						makeAttachment(user, `pushed new branch [${refParser(data.ref)}](${web_url}/commits/${refParser(data.ref)}) to [${project.name}](${web_url}), which is ${data.total_commits_count} commits ahead of master`)
 					]
@@ -233,7 +234,7 @@ See: ${data.object_attributes.url}`
 		return {
 			content: {
 				username: `gitlab/${project.name}`,
-				icon_url: project.avatar_url || data.user_avatar || '',
+				icon_url: project.avatar_url || data.user_avatar || GITLAB_ICON,
 				attachments: [
 					makeAttachment(user, `pushed ${data.total_commits_count} commits to branch [${refParser(data.ref)}](${web_url}/commits/${refParser(data.ref)}) in [${project.name}](${web_url})`),
 					{
@@ -262,7 +263,7 @@ See: ${data.object_attributes.url}`
 		return {
 			content: {
 				username: `gitlab/${project.name}`,
-				icon_url: project.avatar_url || data.user_avatar || '',
+				icon_url: project.avatar_url || data.user_avatar || GITLAB_ICON,
 				text: MENTION_ALL_ALLOWED ? '@all' : '',
 				attachments: [
 					makeAttachment(user, message)
@@ -302,7 +303,7 @@ See: ${data.object_attributes.url}`
 		return {
 			content: {
 				username: `gitlab/${project.name}`,
-				icon_url: project.avatar_url || data.user_avatar || '',
+				icon_url: project.avatar_url || data.user_avatar || GITLAB_ICON,
 				attachments: [
 					makeAttachment(user, `pipeline returned *${pipeline.status}* for commit [${commit.id.slice(0, 8)}](${commit.url}) made by *${commit.author.name}*`, this.createColor(pipeline.status))
 				]
@@ -319,7 +320,7 @@ See: ${data.object_attributes.url}`
 		return {
 			content: {
 				username: `gitlab/${data.repository.name}`,
-				icon_url: '',
+				icon_url: GITLAB_ICON,
 				attachments: [
 					makeAttachment(user, `build named *${data.build_name}* returned *${data.build_status}* for [${data.project_name}](${data.repository.homepage})`, this.createColor(data.build_status))
 				]
@@ -356,7 +357,7 @@ See: ${data.object_attributes.url}`
 		return {
 			content: {
 				username: project_path,
-				icon_url: project.avatar_url || data.user.avatar_url || '',
+				icon_url: project.avatar_url || data.user.avatar_url || GITLAB_ICON,
 				text: `The wiki page ${wiki_page_title} was ${user_action} by ${user_name}`
 			}
 		};
